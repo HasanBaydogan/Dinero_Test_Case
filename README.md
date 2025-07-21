@@ -44,7 +44,6 @@ Bu proje, Dinero şirketi için geliştirilmiş modern bir iş başvuru formu uy
 1. **Projeyi klonlayın**
 ```bash
 git clone <repository-url>
-cd HASAN_BAYDOGAN
 ```
 
 2. **Bağımlılıkları yükleyin**
@@ -154,7 +153,7 @@ Bu proje Dinero şirketi için özel olarak geliştirilmiştir.
 
 **Hasan BAYDOGAN**
 - LinkedIn: [Hasan BAYDOGAN](https://www.linkedin.com/in/hasan-baydogan)
-- E-posta: [E-posta adresi]
+- E-posta: hasanbaydogan20@gmail.com
 
 ---
 
