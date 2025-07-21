@@ -11,10 +11,6 @@ export class LocationApiService {
     try {
       const response = await this.client.getProvinces();
 
-      if (import.meta.env.DEV) {
-        console.log("Provinces API Response:", response.data);
-      }
-
       if (response.data?.success) {
         return ResponseFormatter.success(
           response.data.data || [],
@@ -40,7 +36,6 @@ export class LocationApiService {
       const response = await this.client.getDistricts(provinceId);
 
       if (import.meta.env.DEV) {
-        console.log("Districts API Response:", response.data);
       }
 
       if (response.data?.success) {

@@ -1,15 +1,11 @@
 // Environment variables with production fallbacks
 export const API_CONFIG = {
-  BASE_URL:
-    import.meta.env.VITE_API_BASE_URL || "https://test.com.tr/api/test/case",
-  PROVINCES_URL:
-    import.meta.env.VITE_PROVINCES_API_URL ||
-    "https://api.aidath.com/api/v1/global/public/getprovincesordistricts",
-  CLIENT_ID: import.meta.env.VITE_CLIENT_ID || "2",
-  OS_ID: import.meta.env.VITE_OS_ID || "2",
-  TIMEOUT: parseInt(import.meta.env.VITE_API_TIMEOUT) || 30000,
-  PROVINCES_TIMEOUT:
-    parseInt(import.meta.env.VITE_PROVINCES_API_TIMEOUT) || 10000,
+  BASE_URL: import.meta.env.VITE_API_BASE_URL,
+  PROVINCES_URL: import.meta.env.VITE_PROVINCES_API_URL,
+  CLIENT_ID: import.meta.env.VITE_CLIENT_ID,
+  OS_ID: import.meta.env.VITE_OS_ID,
+  TIMEOUT: parseInt(import.meta.env.VITE_API_TIMEOUT),
+  PROVINCES_TIMEOUT: parseInt(import.meta.env.VITE_PROVINCES_API_TIMEOUT),
 };
 
 // HTTP status code error messages
