@@ -1,0 +1,141 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Text:wght@400;500;600;700&display=swap');
+
+@font-face {
+  font-family: 'Ubuntu';
+  src: url('./assets/fonts/Ubuntu-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+/* Toggle Switch Gradient */
+.toggle-gradient {
+  background: linear-gradient(116.03deg, #1D1D1B -4.81%, #543F95 50.75%, #3F2F70 88.49%);
+}
+
+/* Toggle Switch On State */
+.toggle-on {
+  background: linear-gradient(116.03deg, #1D1D1B -4.81%, #543F95 50.75%, #3F2F70 88.49%) !important;
+}
+
+/* Toggle Switch On State with Peer */
+.peer:checked ~ .toggle-on,
+.peer:checked + .toggle-on {
+  background: linear-gradient(116.03deg, #1D1D1B -4.81%, #543F95 50.75%, #3F2F70 88.49%) !important;
+}
+
+/* Input Text Styling */
+input::placeholder {
+  font-family: 'Red Hat Text', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 22px;
+  color: #CECAD7;
+  vertical-align: middle;
+}
+
+@font-face {
+  font-family: 'Ubuntu';
+  src: url('./assets/fonts/Ubuntu-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Ubuntu';
+  src: url('./assets/fonts/Ubuntu-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@layer base {
+  * {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+  }
+
+  html {
+    height: fill-available;
+  }
+
+  body {
+    min-height: 100vh;
+    min-height: fill-available;
+    background-image: url('./assets/images/dinero-bg.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    font-family: 'Ubuntu', sans-serif;
+    transition: background-color 0.3s ease;
+  }
+
+  body.dark {
+    background-color: #1f2937;
+    color: #f9fafb;
+  }
+
+  p {
+    color: hsl(231, 11%, 63%);
+    font-size: 15px;
+  }
+
+  label {
+    font-size: 15px;
+  }
+
+  button {
+    border-radius: 8px;
+    padding: 0.6em 1.2em;
+    font-size: 1em;
+    font-weight: 400;
+    font-family: inherit;
+    background-color: hsl(213, 96%, 18%);
+    cursor: pointer;
+    transition: all 0.25s;
+  }
+
+  button:hover {
+    box-shadow: 0 1rem 10rem rgba(0, 0, 0, 0.2);
+    background-color: hsl(0, 0%, 100%);
+    color: hsl(213, 96%, 18%);
+  }
+
+  input[type="radio"],
+  input[type="checkbox"] {
+    display: none;
+  }
+}
+
+@layer components {
+  .radio-button-container {
+    @apply flex items-center gap-4 p-4 border-2 border-light-gray rounded-xl cursor-pointer transition-all duration-200 hover:border-purplish-blue;
+  }
+
+  .radio-button-container:hover {
+    @apply border-purplish-blue;
+  }
+
+  input[type="radio"]:checked + .radio-button-container,
+  input[type="checkbox"]:checked + .radio-button-container {
+    @apply bg-magnolia border-purplish-blue;
+  }
+
+  input[type="radio"]:checked + .radio-button-container img,
+  input[type="checkbox"]:checked + .radio-button-container img {
+    @apply bg-purplish-blue border-purplish-blue;
+  }
+
+  .checkmark-logo {
+    @apply bg-white h-5 w-5 p-1 rounded border border-cool-gray transition-all duration-200;
+  }
+
+  .checkmark-cost {
+    @apply ml-auto mr-1 text-purplish-blue;
+  }
+}
+  
