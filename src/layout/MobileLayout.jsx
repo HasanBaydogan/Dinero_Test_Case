@@ -1,6 +1,10 @@
 
 import { SingleForm } from "../components/SingleForm";
 
+//2 farklı layout yapısına gerek olmayabilir. 
+//Önceki kullandığım projelerde bu şekilde kullandığım için rahat olduğum yapıda yazmayı tercih ettim.
+//Tek bir layout ile gerçekleştirebilirim.
+
 // Mobile Layout
 export const MobileLayout = () => {
   return (
