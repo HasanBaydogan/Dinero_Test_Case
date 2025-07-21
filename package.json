@@ -8,10 +8,12 @@
     "build": "vite build",
     "predeploy": "vite build",
     "deploy": "gh-pages -d dist",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "commit-cv": "node scripts/commit-cv-files.js"
   },
   "dependencies": {
     "axios": "^1.10.0",
+    "cloudinary": "^2.7.0",
     "formidable": "^3.5.4",
     "lodash.debounce": "^4.0.8",
     "react": "^18.2.0",

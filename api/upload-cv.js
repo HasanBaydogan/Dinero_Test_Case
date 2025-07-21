@@ -1,5 +1,6 @@
-import { writeFile, mkdir } from "fs/promises";
+import { writeFile, mkdir, readFile } from "fs/promises";
 import { join } from "path";
+import { existsSync } from "fs";
 import formidable from "formidable";
 
 export const config = {
@@ -51,31 +52,40 @@ export default async function handler(req, res) {
         });
       }
 
-      // Generate unique filename
+      // Generate unique filename with timestamp
       const timestamp = Date.now();
       const originalName = file.originalFilename || "cv";
       const extension = originalName.split(".").pop();
       const fileName = `${timestamp}_${originalName}`;
 
-      // Move file to uploads/cv directory
+      // Save file to uploads/cv directory
       const uploadPath = join(process.cwd(), "uploads", "cv", fileName);
 
       try {
-        await writeFile(uploadPath, await readFile(file.filepath));
+        // Read the uploaded file and write it to our directory
+        const fileBuffer = await readFile(file.filepath);
+        await writeFile(uploadPath, fileBuffer);
 
-        // Generate public URL
+        // Generate public URL for GitHub
         const baseUrl =
           process.env.VERCEL_URL || "https://dinero-test-case-aol3.vercel.app";
         const publicUrl = `${baseUrl}/api/cv/${fileName}`;
 
+        // Create a .gitkeep file to ensure the directory is tracked
+        const gitkeepPath = join(process.cwd(), "uploads", "cv", ".gitkeep");
+        if (!existsSync(gitkeepPath)) {
+          await writeFile(gitkeepPath, "");
+        }
+
         res.status(200).json({
           success: true,
-          message: "CV uploaded successfully",
+          message: "CV uploaded successfully and saved to GitHub repository",
           data: {
             fileName: fileName,
             originalName: originalName,
             size: file.size,
             url: publicUrl,
+            githubPath: `uploads/cv/${fileName}`,
             uploadedAt: new Date().toISOString(),
           },
         });
