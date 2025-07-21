@@ -100,12 +100,21 @@ export const submitForm = async (formData, cvFile) => {
 export const uploadFile = async (file) => {
   const formData = new FormData();
   formData.append("file", file);
+
   try {
-    const response = await api.post("/upload", formData, {
+    // Use serverless function for CV upload in production
+    const uploadUrl = import.meta.env.PROD
+      ? "/api/upload-cv"
+      : `${API_CONFIG.BASE_URL}/upload`;
+
+    const response = await axios.post(uploadUrl, formData, {
       headers: { "Content-Type": "multipart/form-data" },
+      timeout: API_CONFIG.API_TIMEOUT,
     });
+
     return response.data;
   } catch (err) {
+    console.error("File upload error:", err);
     throw err.response?.data || { message: "File upload error" };
   }
 };
