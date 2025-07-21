@@ -22,7 +22,9 @@ const DEFAULT_MESSAGES = {
 // Environment variables
 const API_CONFIG = {
   BASE_URL: import.meta.env.VITE_API_BASE_URL,
-  PROVINCES_URL: import.meta.env.VITE_PROVINCES_API_URL,
+  PROVINCES_URL: import.meta.env.PROD
+    ? "/api/provinces"
+    : import.meta.env.VITE_PROVINCES_API_URL,
   CLIENT_ID: import.meta.env.VITE_CLIENT_ID,
   OS_ID: import.meta.env.VITE_OS_ID,
   API_TIMEOUT: Number(import.meta.env.VITE_API_TIMEOUT),
@@ -43,10 +45,12 @@ const api = axios.create({
 // Provinces API client
 const provincesApi = axios.create({
   timeout: API_CONFIG.PROVINCES_TIMEOUT,
-  headers: {
-    "client-id": API_CONFIG.CLIENT_ID,
-    "os-id": API_CONFIG.OS_ID,
-  },
+  headers: import.meta.env.PROD
+    ? {}
+    : {
+        "client-id": API_CONFIG.CLIENT_ID,
+        "os-id": API_CONFIG.OS_ID,
+      },
 });
 
 // Form data transformer
