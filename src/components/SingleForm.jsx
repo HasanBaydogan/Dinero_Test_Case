@@ -94,8 +94,8 @@ export function SingleForm() {
 
           {/* Action Buttons Section */}
           <ActionButtonsSection isLoading={isLoading} />
-        </form>
-      </div>
+      </form>
+    </div>
     </>
   );
 } 

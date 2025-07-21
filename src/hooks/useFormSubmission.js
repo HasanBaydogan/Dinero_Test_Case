@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
 import { REDUCER_ACTIONS, useFormDispatch } from "../state/FormContext";
 import { validateForm as validateFormZod } from "../validation/formSchema";
-import apiService from "../services/apiService";
+import { submitForm, uploadFile } from "../services/apiService";
 
 export const useFormSubmission = (formState, kvkkConsent, setKvkkConsent) => {
   const dispatch = useFormDispatch();
@@ -37,7 +37,7 @@ export const useFormSubmission = (formState, kvkkConsent, setKvkkConsent) => {
 
         try {
           // Submit form to API
-          const result = await apiService.submitForm(formState, formState.cv);
+          const result = await submitForm(formState, formState.cv);
 
           if (result.success) {
             // Show success modal

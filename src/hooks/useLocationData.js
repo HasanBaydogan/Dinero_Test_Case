@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { REDUCER_ACTIONS, useFormDispatch } from "../state/FormContext";
-import apiService from "../services/apiService";
+import { getProvinces, getDistricts } from "../services/apiService";
 
 export const useLocationData = (formState) => {
   const dispatch = useFormDispatch();
@@ -14,7 +14,7 @@ export const useLocationData = (formState) => {
     const loadProvinces = async () => {
       setIsLoadingProvinces(true);
       try {
-        const result = await apiService.getProvinces();
+        const result = await getProvinces();
         if (result.success) {
           setProvinces(result.data);
         } else {
@@ -39,7 +39,7 @@ export const useLocationData = (formState) => {
 
     setIsLoadingDistricts(true);
     try {
-      const result = await apiService.getDistricts(provinceId);
+      const result = await getDistricts(provinceId);
       if (result.success) {
         setDistricts(result.data);
       } else {
