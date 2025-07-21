@@ -1,14 +1,23 @@
 import axios from "axios";
 
-// API base URL
-const API_BASE_URL = "https://test.com.tr/api/test/case";
+// Environment variables
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || "https://test.com.tr/api/test/case";
+const PROVINCES_API_URL =
+  import.meta.env.VITE_PROVINCES_API_URL ||
+  "https://api.aidath.com/api/v1/global/public/getprovincesordistricts";
+const CLIENT_ID = import.meta.env.VITE_CLIENT_ID || "2";
+const OS_ID = import.meta.env.VITE_OS_ID || "2";
+const API_TIMEOUT = parseInt(import.meta.env.VITE_API_TIMEOUT) || 30000;
+const PROVINCES_API_TIMEOUT =
+  parseInt(import.meta.env.VITE_PROVINCES_API_TIMEOUT) || 10000;
 
 // API service class
 class ApiService {
   constructor() {
     this.api = axios.create({
       baseURL: API_BASE_URL,
-      timeout: 30000, // 30 saniye timeout
+      timeout: API_TIMEOUT, // Environment variable timeout
       headers: {
         "Content-Type": "application/json",
       },
@@ -187,6 +196,110 @@ class ApiService {
         return "Sunucu yanıt vermiyor.";
       default:
         return "Bilinmeyen bir hata oluştu.";
+    }
+  }
+
+  // İl listesini getir
+  async getProvinces() {
+    try {
+      const response = await axios.post(
+        PROVINCES_API_URL,
+        {},
+        {
+          timeout: PROVINCES_API_TIMEOUT, // Environment variable timeout
+          headers: {
+            "client-id": CLIENT_ID,
+            "os-id": OS_ID,
+          },
+        }
+      );
+
+      console.log("Provinces API Response:", response.data);
+
+      if (response.data && response.data.success) {
+        return {
+          success: true,
+          data: response.data.data || [],
+          message: response.data.message || "İller başarıyla getirildi.",
+        };
+      } else {
+        return {
+          success: false,
+          data: [],
+          message: response.data?.message || "İl listesi alınamadı.",
+        };
+      }
+    } catch (error) {
+      console.error("Provinces API Error:", error);
+
+      let errorMessage = "İl listesi alınırken bir hata oluştu.";
+
+      if (error.response) {
+        errorMessage = error.response.data?.message || errorMessage;
+      } else if (error.request) {
+        errorMessage =
+          "Ağ bağlantısı hatası. İnternet bağlantınızı kontrol edin.";
+      }
+
+      return {
+        success: false,
+        data: [],
+        message: errorMessage,
+        details: error,
+      };
+    }
+  }
+
+  // İlçe listesini getir
+  async getDistricts(provinceId) {
+    try {
+      const response = await axios.post(
+        PROVINCES_API_URL,
+        {
+          provincesId: provinceId,
+        },
+        {
+          timeout: PROVINCES_API_TIMEOUT, // Environment variable timeout
+          headers: {
+            "client-id": CLIENT_ID,
+            "os-id": OS_ID,
+          },
+        }
+      );
+
+      console.log("Districts API Response:", response.data);
+
+      if (response.data && response.data.success) {
+        return {
+          success: true,
+          data: response.data.data || [],
+          message: response.data.message || "İlçeler başarıyla getirildi.",
+        };
+      } else {
+        return {
+          success: false,
+          data: [],
+          message: response.data?.message || "İlçe listesi alınamadı.",
+        };
+      }
+    } catch (error) {
+      console.error("Districts API Error:", error);
+
+      let errorMessage = "İlçe listesi alınırken bir hata oluştu.";
+
+      if (error.response) {
+        errorMessage = error.response.data?.message || errorMessage;
+      } else if (error.request) {
+        errorMessage =
+          "Ağ bağlantısı hatası. İnternet bağlantınızı kontrol edin.";
+      }
+
+      return {
+        success: false,
+        data: [],
+        message: errorMessage,
+        details: error,
+      };
     }
   }
 

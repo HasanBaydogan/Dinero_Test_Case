@@ -12,25 +12,25 @@ export const Header = () => {
   return (
     <header className="w-full bg-white dark:bg-gray-900 shadow-sm border-b border-gray-200 dark:border-gray-700">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+        <div className="flex justify-between items-center h-16 gap-2">
           {/* Logo on the left */}
-          <div className="flex items-center">
+          <div className="flex items-center flex-shrink-0">
             <img 
-              src="/Dinero.png" 
+              src="/Dinero_Logo.png" 
               alt="Dinero Logo" 
-              className="h-8 w-auto"
+              className="h-6 sm:h-16 w-auto"
             />
           </div>
 
           {/* Title in center */}
-          <div className="flex-1 flex justify-center">
-            <h1 className="text-lg font-semibold text-gray-900 dark:text-white">
+          <div className="flex-1 flex justify-center min-w-0">
+            <h1 className="text-sm sm:text-base lg:text-lg font-semibold text-gray-900 dark:text-white whitespace-nowrap text-center px-2 truncate">
               Dinero Case - Hasan BAYDOGAN
             </h1>
           </div>
 
           {/* Dark mode toggle on the right */}
-          <div className="flex items-center">
+          <div className="flex items-center flex-shrink-0">
             <button
               onClick={toggleDarkMode}
               className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200"

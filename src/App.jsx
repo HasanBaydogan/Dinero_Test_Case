@@ -2,7 +2,7 @@ import "./App.css";
 import { FormProvider } from "./state/FormContext";
 import { MobileLayout } from "./layout/MobileLayout";
 import { DesktopLayout } from "./layout/DesktopLayout";
-import { Header } from "./components/Header";
+import { Header } from "./components/MainHeader";
 
 import useIsMobile from "./useIsMobile";
 

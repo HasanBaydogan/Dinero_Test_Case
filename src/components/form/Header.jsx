@@ -1,4 +1,4 @@
-import { ToggleSwitch } from "./ToggleSwitch";
+import { ToggleSwitch } from "./ToggleSwitch/ToggleSwitch";
 import { REDUCER_ACTIONS, useForm, useFormDispatch } from "../../state/FormContext";
 
 export function Header() {

@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 import { Input } from "./form/Input";
+import { Select } from "./form/Select";
 import { CVUpload } from "./form/CVUpload";
 import { Header } from "./form/Header";
 import { REDUCER_ACTIONS, useForm, useFormDispatch } from "../state/FormContext";
@@ -34,6 +35,10 @@ export function SingleForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [modalResponse, setModalResponse] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [provinces, setProvinces] = useState([]);
+  const [isLoadingProvinces, setIsLoadingProvinces] = useState(false);
+  const [districts, setDistricts] = useState([]);
+  const [isLoadingDistricts, setIsLoadingDistricts] = useState(false);
 
   // Lottie animation options
   const lottieOptions = {
@@ -44,6 +49,62 @@ export function SingleForm() {
       preserveAspectRatio: "xMidYMid slice"
     }
   };
+
+  // Load provinces on component mount
+  useEffect(() => {
+    const loadProvinces = async () => {
+      setIsLoadingProvinces(true);
+      try {
+        const result = await apiService.getProvinces();
+        if (result.success) {
+          setProvinces(result.data);
+          console.log("Provinces loaded:", result.data);
+        } else {
+          console.error("Failed to load provinces:", result.message);
+        }
+      } catch (error) {
+        console.error("Error loading provinces:", error);
+      } finally {
+        setIsLoadingProvinces(false);
+      }
+    };
+
+    loadProvinces();
+  }, []);
+
+  // Load districts when province changes
+  const loadDistricts = async (provinceId) => {
+    if (!provinceId) {
+      setDistricts([]);
+      return;
+    }
+
+    setIsLoadingDistricts(true);
+    try {
+      const result = await apiService.getDistricts(provinceId);
+      if (result.success) {
+        setDistricts(result.data);
+        console.log("Districts loaded:", result.data);
+        console.log("District structure example:", result.data[0]);
+      } else {
+        console.error("Failed to load districts:", result.message);
+        setDistricts([]);
+      }
+    } catch (error) {
+      console.error("Error loading districts:", error);
+      setDistricts([]);
+    } finally {
+      setIsLoadingDistricts(false);
+    }
+  };
+
+  // Clear districts when address is toggled off
+  useEffect(() => {
+    if (!formState.includeAddress) {
+      setDistricts([]);
+      setIsLoadingDistricts(false);
+    }
+  }, [formState.includeAddress]);
 
   // Real-time validation helper with Zod
   const validateFieldLocal = (fieldName, value) => {
@@ -60,6 +121,21 @@ export function SingleForm() {
       payload: value,
     });
 
+    // If province is selected, load districts
+    if (name === 'city' && value) {
+      loadDistricts(value);
+      // Clear district when province changes
+      dispatch({
+        type: REDUCER_ACTIONS.UPDATE_INPUT,
+        field: 'district',
+        payload: '',
+      });
+      dispatch({
+        type: REDUCER_ACTIONS.CLEAR_ERROR,
+        field: 'district'
+      });
+    }
+
     // Real-time validation
     const fieldError = validateFieldLocal(name, value);
     
@@ -74,7 +150,7 @@ export function SingleForm() {
         field: name
       });
     }
-  }, [dispatch]);
+  }, [dispatch, loadDistricts]);
 
   const handleEmailChange = useCallback((e) => {
     const email = e.target.value;
@@ -248,11 +324,11 @@ export function SingleForm() {
       <div className="w-full h-full flex flex-col">
         <Header />
         
-        <form onSubmit={handleSubmit} className="flex-1 flex flex-col gap-[40px]">
+        <form onSubmit={handleSubmit} className="flex-1 flex flex-col gap-6 sm:gap-8 lg:gap-[40px]">
         {/* Form Fields - Two Columns */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
           {/* Left Column */}
-          <div className="space-y-8">
+          <div className="space-y-4 sm:space-y-6 lg:space-y-8">
             {/* Adınız */}
             <Input
               label="Adınız"
@@ -286,7 +362,7 @@ export function SingleForm() {
             />
           </div>
           {/* Right Column */}
-          <div className="space-y-8">
+          <div className="space-y-4 sm:space-y-6 lg:space-y-8">
             {/* Soyadınız */}
             <Input
               label="Soyadınız"
@@ -322,48 +398,38 @@ export function SingleForm() {
         
         {/* Adres Bilgileri - Koşullu Görünüm */}
         {formState.includeAddress && (
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6 lg:space-y-8">
             {/* İl ve İlçe - Yan Yana */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
               {/* İl */}
-              <Input
+              <Select
                 label="İl"
-                type="text"
                 id="city"
                 name="city"
                 value={formState.city || ''}
                 onChange={handleTextChange}
-                placeholder="İl Giriniz"
+                placeholder={isLoadingProvinces ? "Yükleniyor..." : "İl Seçiniz"}
                 error={formState.errors?.city}
-                disabled={isLoading}
+                disabled={isLoading || isLoadingProvinces}
+                options={provinces}
                 icon={
                   <img src={LocationVector} alt="location icon" />
-                }
-                dropdownIcon={
-                  <svg className="h-4 w-4 text-cool-gray" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-                  </svg>
                 }
               />
               
               {/* İlçe */}
-              <Input
+              <Select
                 label="İlçe"
-                type="text"
                 id="district"
                 name="district"
                 value={formState.district || ''}
                 onChange={handleTextChange}
-                placeholder="İlçe Giriniz"
+                placeholder={!formState.city ? "Önce il seçiniz" : isLoadingDistricts ? "Yükleniyor..." : "İlçe Seçiniz"}
                 error={formState.errors?.district}
-                disabled={isLoading}
+                disabled={isLoading || isLoadingDistricts || !formState.city}
+                options={districts}
                 icon={
                   <img src={LocationVector} alt="location icon" />
-                }
-                dropdownIcon={
-                  <svg className="h-4 w-4 text-cool-gray" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-                  </svg>
                 }
               />
             </div>
@@ -389,8 +455,8 @@ export function SingleForm() {
           </div>
         )}
 
-        {/* LinkedIn URL - Tam Genişlik (2x) */}
-        <div className="col-span-1 lg:col-span-2">
+        {/* LinkedIn URL - Tam Genişlik */}
+        <div className="w-full">
           <Input
             label="LinkedIn URL"
             type="url"
@@ -407,9 +473,9 @@ export function SingleForm() {
           />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
           {/* Left Column */}
-                     <div className="space-y-8">
+                     <div className="space-y-4 sm:space-y-6 lg:space-y-8">
              {/* CV Upload */}
              <CVUpload
                label="CV Yükleyin"
@@ -465,7 +531,7 @@ export function SingleForm() {
              />
            </div>
           {/* Right Column */}
-          <div className="space-y-8">
+          <div className="space-y-4 sm:space-y-6 lg:space-y-8">
             {/* Maaş Beklentisi */}
             <Input
               label="Maaş Beklentisi"
@@ -539,16 +605,18 @@ export function SingleForm() {
           )}
 
           {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 w-full justify-end">
+          <div className="flex flex-row gap-3 sm:gap-4 w-full justify-end">
             <button
               type="button"
-              className="font-medium focus:outline-none focus:ring-2 focus:ring-purplish-blue focus:ring-offset-2 transition-colors duration-200 bg-white dark:bg-[#374151] border border-[#E4E1EC] dark:border-[#374151] text-gray-800 dark:text-[#FFFFFF]"
+              className="font-medium focus:outline-none focus:ring-2 focus:ring-purplish-blue focus:ring-offset-2 transition-colors duration-200 bg-white dark:bg-[#374151] border border-[#E4E1EC] dark:border-[#374151] text-gray-800 dark:text-[#FFFFFF] flex-1 sm:flex-none whitespace-nowrap"
               style={{
-                width: '228px',
+                minWidth: '140px',
+                maxWidth: '228px',
                 height: '56px',
                 borderRadius: '20px',
-                padding: '15px 24px',
-                gap: '10px'
+                padding: '15px 16px',
+                gap: '10px',
+                fontSize: '14px'
               }}
             >
               İş Tanımına Geri Dön
@@ -556,14 +624,16 @@ export function SingleForm() {
             <button
               type="submit"
               disabled={isLoading}
-              className="text-white font-medium focus:outline-none focus:ring-2 focus:ring-purplish-blue focus:ring-offset-2 transition-colors duration-200 flex items-center justify-center"
+              className="text-white font-medium focus:outline-none focus:ring-2 focus:ring-purplish-blue focus:ring-offset-2 transition-colors duration-200 flex items-center justify-center flex-1 sm:flex-none whitespace-nowrap"
               style={{
-                width: '224px',
+                minWidth: '140px',
+                maxWidth: '224px',
                 height: '56px',
                 borderRadius: '20px',
                 backgroundColor: '#3F2F70',
-                padding: '15px 24px',
+                padding: '15px 16px',
                 gap: '10px',
+                fontSize: '14px',
                 boxShadow: '0px 4px 8px 0px #3F2F7040'
               }}
             >

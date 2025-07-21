@@ -83,7 +83,7 @@ export const formSchema = z.object({
     .refine((file) => {
       if (!file || !(file instanceof File)) return true;
       return file.size <= 1 * 1024 * 1024;
-    }, "CV dosyası 5MB'dan küçük olmalıdır")
+    }, "CV dosyası 1MB'dan küçük olmalıdır")
     .refine((file) => {
       if (!file || !(file instanceof File)) return true;
       const allowedTypes = [
@@ -118,13 +118,15 @@ export const formSchema = z.object({
 
   // Adres alanları (sadece adres seçilirse zorunlu)
   city: z
-    .string({ invalid_type_error: "İl alanı metin olmalıdır" })
-    .optional()
+    .union([z.string().optional(), z.number().optional()], {
+      invalid_type_error: "İl alanı geçerli olmalıdır",
+    })
     .transform((val) => val || ""),
 
   district: z
-    .string({ invalid_type_error: "İlçe alanı metin olmalıdır" })
-    .optional()
+    .union([z.string().optional(), z.number().optional()], {
+      invalid_type_error: "İlçe alanı geçerli olmalıdır",
+    })
     .transform((val) => val || ""),
 
   address: z
@@ -147,18 +149,33 @@ export const formSchema = z.object({
 // Adres alanları için ayrı schema (adres seçilirse zorunlu)
 export const addressSchema = z.object({
   city: z
-    .string({
-      required_error: "İl seçimi zorunludur",
-      invalid_type_error: "İl alanı metin olmalıdır",
-    })
-    .min(1, "İl seçimi zorunludur"),
+    .union(
+      [
+        z.string().min(1, "İl seçimi zorunludur"),
+        z.number().min(1, "İl seçimi zorunludur"),
+      ],
+      {
+        required_error: "İl seçimi zorunludur",
+        invalid_type_error: "İl alanı geçerli olmalıdır",
+      }
+    )
+    .refine((val) => val && val.toString().length > 0, "İl seçimi zorunludur"),
 
   district: z
-    .string({
-      required_error: "İlçe seçimi zorunludur",
-      invalid_type_error: "İlçe alanı metin olmalıdır",
-    })
-    .min(1, "İlçe seçimi zorunludur"),
+    .union(
+      [
+        z.string().min(1, "İlçe seçimi zorunludur"),
+        z.number().min(1, "İlçe seçimi zorunludur"),
+      ],
+      {
+        required_error: "İlçe seçimi zorunludur",
+        invalid_type_error: "İlçe alanı geçerli olmalıdır",
+      }
+    )
+    .refine(
+      (val) => val && val.toString().length > 0,
+      "İlçe seçimi zorunludur"
+    ),
 
   address: z
     .string({

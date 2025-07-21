@@ -12,7 +12,7 @@ export const Input = ({ label, error, icon, dropdownIcon, multiline, style, disa
   const [isFocused, setIsFocused] = useState(false);
 
   return (
-    <div className="relative mb-4">
+    <div className="relative">
       {/* Header Label */}
       <div className="absolute -top-3 left-4 z-10">
         <div className={`w-auto min-w-[66px] h-6 px-[14px] py-[6px] border border-input-header-border dark:border-gray-600 rounded-[15px] flex items-center justify-center transition-all duration-200 ${
@@ -51,7 +51,7 @@ export const Input = ({ label, error, icon, dropdownIcon, multiline, style, disa
           />
         ) : (
           <input 
-            className={`w-[450px] h-[60px] pl-10 pr-4 border rounded-[60px] focus:outline-none transition-all duration-200 text-input-text dark:text-gray-200 font-red-hat-text font-normal text-base leading-input-text align-middle ${
+            className={`w-full h-[60px] pl-10 pr-4 border rounded-[60px] focus:outline-none transition-all duration-200 text-input-text dark:text-gray-200 font-red-hat-text font-normal text-base leading-input-text align-middle ${
               dropdownIcon ? 'pr-10' : ''
             } ${
               error ? 'border-strawberry-red bg-white dark:bg-gray-800' : 
