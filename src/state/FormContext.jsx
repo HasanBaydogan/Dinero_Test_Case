@@ -3,12 +3,10 @@ import { createContext, useContext, useReducer } from "react";
 const FormContext = createContext(null);
 const FormDispatchContext = createContext(null);
 
-// custom hook to allow us to access formState
 export function useForm() {
   return useContext(FormContext);
 }
 
-// custom hook to allow us to access formDispatch
 export function useFormDispatch() {
   return useContext(FormDispatchContext);
 }

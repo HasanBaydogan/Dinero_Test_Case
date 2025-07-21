@@ -1,20 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
 
-/**
- * Select dropdown with floating label, header, error, and options
- * @param {string} label
- * @param {string | undefined} error
- * @param {Array} options - Array of objects with {value, label} or {provincesId, provincesName}
- * @param {HTMLSelectElement} args
- * @returns Select Component
- */
 export const Select = ({ label, error, options = [], icon, disabled, style, ...args }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const dropdownRef = useRef(null);
   const hasValue = args.value && args.value !== '';
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -29,7 +20,6 @@ export const Select = ({ label, error, options = [], icon, disabled, style, ...a
     };
   }, []);
 
-  // Get display value
   const getDisplayValue = () => {
     if (!args.value) return '';
     
@@ -46,13 +36,11 @@ export const Select = ({ label, error, options = [], icon, disabled, style, ...a
     ) : '';
   };
 
-  // Handle option selection
   const handleOptionSelect = (option) => {
     const value = option.value || option.provincesId || option.districtId;
     const label = option.label || option.provincesName || option.districtName;
     
     if (args.onChange) {
-      // Create a synthetic event
       const syntheticEvent = {
         target: {
           name: args.name,

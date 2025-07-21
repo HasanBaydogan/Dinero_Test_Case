@@ -13,7 +13,6 @@ export function Header() {
       payload: newIncludeAddress,
     });
     
-    // If address is disabled, clear address errors
     if (!newIncludeAddress) {
       const currentErrors = { ...formState.errors };
       delete currentErrors.city;

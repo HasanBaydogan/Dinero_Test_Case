@@ -3,9 +3,9 @@ import { useState } from 'react';
 export const Header = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
 
+  // Light/Dark mode toggle function
   const toggleDarkMode = () => {
     setIsDarkMode(!isDarkMode);
-    // Here you can add logic to actually change the theme
     document.documentElement.classList.toggle('dark');
   };
 

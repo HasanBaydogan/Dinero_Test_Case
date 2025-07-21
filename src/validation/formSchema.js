@@ -54,16 +54,12 @@ export const formSchema = z.object({
   cv: z
     .any()
     .refine((file) => {
-      // Dosya yoksa hata ver
       if (!file) return false;
 
-      // File object kontrolü
       if (file instanceof File) {
-        // Dosya boyutu kontrolü (5MB)
         if (file.size > 1 * 1024 * 1024) {
           return false;
         }
-        // Dosya tipi kontrolü
         const allowedTypes = [
           "application/pdf",
           "application/msword",
@@ -74,9 +70,8 @@ export const formSchema = z.object({
         }
         return true;
       }
-      // File-like object kontrolü (name property'si varsa)
       if (file && typeof file === "object" && file.name) return true;
-      // String kontrolü (dosya adı)
+
       if (typeof file === "string" && file.trim()) return true;
       return false;
     }, "CV dosyası yüklemeniz zorunludur")
@@ -94,12 +89,11 @@ export const formSchema = z.object({
       return allowedTypes.includes(file.type);
     }, "CV dosyası PDF, DOC veya DOCX formatında olmalıdır"),
 
-  // Opsiyonel alanlar
   linkedin: z
     .string({ invalid_type_error: "LinkedIn URL'si metin olmalıdır" })
     .optional()
     .refine((value) => {
-      if (!value) return true; // Opsiyonel
+      if (!value) return true;
       const linkedinRegex =
         /^https?:\/\/(www\.)?linkedin\.com\/in\/[a-zA-Z0-9-]+\/?$/;
       return linkedinRegex.test(value);
@@ -110,13 +104,12 @@ export const formSchema = z.object({
     .string({ invalid_type_error: "Maaş alanı metin olmalıdır" })
     .optional()
     .refine((value) => {
-      if (!value) return true; // Opsiyonel
+      if (!value) return true;
       const salaryRegex = /^[\d,]+$/;
       return salaryRegex.test(value);
     }, "Maaş alanı sadece rakam ve virgül içerebilir (örn: 15000,50)")
     .transform((val) => val || ""),
 
-  // Adres alanları (sadece adres seçilirse zorunlu)
   city: z
     .union([z.string().optional(), z.number().optional()], {
       invalid_type_error: "İl alanı geçerli olmalıdır",
@@ -134,7 +127,6 @@ export const formSchema = z.object({
     .optional()
     .transform((val) => val || ""),
 
-  // KVKK consent
   kvkkConsent: z
     .boolean({
       required_error: "KVKK onayı zorunludur",
@@ -146,7 +138,6 @@ export const formSchema = z.object({
     ),
 });
 
-// Adres alanları için ayrı schema (adres seçilirse zorunlu)
 export const addressSchema = z.object({
   city: z
     .union(
@@ -188,16 +179,13 @@ export const addressSchema = z.object({
 // Form validation fonksiyonu
 export const validateForm = (formData, kvkkConsent, includeAddress = false) => {
   try {
-    // Ensure formData is not undefined
     const safeFormData = formData || {};
 
-    // Ana form validation
     const result = formSchema.parse({
       ...safeFormData,
       kvkkConsent,
     });
 
-    // Eğer adres seçilmişse adres alanlarını da validate et
     if (includeAddress) {
       addressSchema.parse({
         city: safeFormData.city,
@@ -208,10 +196,8 @@ export const validateForm = (formData, kvkkConsent, includeAddress = false) => {
 
     return { success: true, data: result };
   } catch (error) {
-    // Safe error handling
     try {
       if (error instanceof z.ZodError) {
-        // ZodError'da errors yerine issues kullanılır
         const issues = error.issues || error.errors || [];
 
         if (Array.isArray(issues)) {
@@ -225,9 +211,7 @@ export const validateForm = (formData, kvkkConsent, includeAddress = false) => {
           return { success: false, errors };
         }
       }
-    } catch (parseError) {
-      // Silent error handling
-    }
+    } catch (parseError) {}
     return {
       success: false,
       errors: { general: "Bilinmeyen bir hata oluştu" },
@@ -235,7 +219,6 @@ export const validateForm = (formData, kvkkConsent, includeAddress = false) => {
   }
 };
 
-// Tek alan validation fonksiyonu
 export const validateField = (
   fieldName,
   value,
@@ -243,16 +226,14 @@ export const validateField = (
   kvkkConsent = false
 ) => {
   try {
-    // Sadece belirli alanı validate et
     const partialSchema = z.object({
       [fieldName]: formSchema.shape[fieldName],
     });
 
     partialSchema.parse({ [fieldName]: value });
-    return null; // Başarılı ise null döndür
+    return null;
   } catch (error) {
     if (error instanceof z.ZodError) {
-      // ZodError'da errors yerine issues kullanılır
       const issues = error.issues || error.errors || [];
       const fieldError = issues.find((err) => err.path[0] === fieldName);
       return fieldError?.message || null;

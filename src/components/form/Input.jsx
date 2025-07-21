@@ -1,12 +1,5 @@
 import { useState } from 'react';
 
-/**
- * Input with floating label, header, error, and any input args
- * @param {string} label
- * @param {string | undefined} error
- * @param {HTMLInputElement} args
- * @returns Input Component
- */
 export const Input = ({ label, error, icon, dropdownIcon, multiline, style, disabled, ...args }) => {
   const hasValue = args.value && args.value.trim() !== '';
   const [isFocused, setIsFocused] = useState(false);

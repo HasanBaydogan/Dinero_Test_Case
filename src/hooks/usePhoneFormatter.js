@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
 
 // Form sadece Türkçe karakterler içerdiği için ve örnekte bu şekilde olduğu için Türkiyeye özel formatlama yapıyorum.
-
+//Zod kullanılmak istenmezse örnek olarak yazdığım Telefon Numarası formatlama hook'u
 export const usePhoneFormatter = () => {
   const [formattedPhone, setFormattedPhone] = useState("");
 

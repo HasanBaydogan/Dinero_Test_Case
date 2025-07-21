@@ -7,7 +7,6 @@ export const CVUpload = ({ label, error, onChange, disabled, ...args }) => {
   const [fileSizeError, setFileSizeError] = useState('');
   const fileInputRef = useRef(null);
 
-  // Clear file size error when error prop changes (when form is reset or valid file is selected)
   useEffect(() => {
     if (!error) {
       setFileSizeError('');
@@ -21,19 +20,15 @@ export const CVUpload = ({ label, error, onChange, disabled, ...args }) => {
   };
 
   const handleFileChange = (e) => {
-    // Clear any previous file size error
     setFileSizeError('');
     
-    // Check if files exist and have length
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
       
-      // Check file size (1MB = 1024 * 1024 bytes)
       const maxSize = 1 * 1024 * 1024;
       if (file.size > maxSize) {
         const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
         setFileSizeError(`Dosya boyutu 1MB'dan büyük olamaz. Seçilen dosya: ${fileSizeMB}MB`);
-        // Clear the input
         e.target.value = '';
         setSelectedFile(null);
         return;
@@ -41,14 +36,11 @@ export const CVUpload = ({ label, error, onChange, disabled, ...args }) => {
       
       setSelectedFile(file);
       if (onChange) {
-        // Pass the original event to parent component
         onChange(e);
       }
     } else {
-      // No file selected
       setSelectedFile(null);
       if (onChange) {
-        // Create an event with no files
         const emptyEvent = {
           target: {
             files: []
